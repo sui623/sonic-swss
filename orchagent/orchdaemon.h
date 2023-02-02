@@ -36,6 +36,7 @@
 #include "sfloworch.h"
 #include "debugcounterorch.h"
 #include "directory.h"
+#include "stporch.h"
 #include "natorch.h"
 #include "isolationgrouporch.h"
 #include "mlagorch.h"
@@ -45,6 +46,7 @@
 #include "bfdorch.h"
 #include "srv6orch.h"
 #include "nvgreorch.h"
+
 
 using namespace swss;
 

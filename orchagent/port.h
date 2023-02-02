@@ -40,6 +40,8 @@ typedef std::map<sai_vlan_id_t, VlanMemberEntry> vlan_members_t;
 
 typedef std::map<std::string, sai_object_id_t> endpoint_ip_l2mc_group_member_map_t;
 
+typedef std::map<sai_uint16_t, sai_object_id_t> stp_port_ids_t;
+
 struct VlanInfo
 {
     sai_object_id_t     vlan_oid = 0;
@@ -128,6 +130,8 @@ public:
     VlanInfo            m_vlan_info;
     MacAddress          m_mac;
     sai_object_id_t     m_bridge_port_id = 0;   // TODO: port could have multiple bridge port IDs
+    stp_port_ids_t      m_stp_port_ids;         //STP Port object ids for each STP instance
+    sai_int16_t         m_stp_id = -1;           //STP instance for the VLAN
     sai_object_id_t     m_bridge_port_admin_state = 0;   // TODO: port could have multiple bridge port IDs
     sai_vlan_id_t       m_port_vlan_id = DEFAULT_PORT_VLAN_ID;  // Port VLAN ID
     sai_object_id_t     m_rif_id = 0;

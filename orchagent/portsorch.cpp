@@ -3,6 +3,7 @@
 #include "bufferorch.h"
 #include "neighorch.h"
 #include "gearboxutils.h"
+#include "stporch.h"
 #include "vxlanorch.h"
 #include "directory.h"
 #include "subintf.h"
@@ -55,6 +56,7 @@ extern string gMySwitchType;
 extern int32_t gVoqMySwitchId;
 extern string gMyHostName;
 extern string gMyAsicName;
+extern StpOrch *gStpOrch;
 
 #define DEFAULT_SYSTEM_PORT_MTU 9100
 #define VLAN_PREFIX         "Vlan"
@@ -4861,6 +4863,9 @@ bool PortsOrch::removeBridgePort(Port &port)
     saiOidToAlias.erase(port.m_bridge_port_id);
     port.m_bridge_port_id = SAI_NULL_OBJECT_ID;
 
+    /* Remove STP ports before bridge port deletion*/
+    gStpOrch->removeStpPorts(port);
+
     /* Remove bridge port */
     PortUpdate update = { port, false };
     notify(SUBJECT_TYPE_BRIDGE_PORT_CHANGE, static_cast<void *>(&update));
@@ -4972,6 +4977,12 @@ bool PortsOrch::removeVlan(Port vlan)
     {
         SWSS_LOG_ERROR("Failed to remove non-empty VLAN %s", vlan.m_alias.c_str());
         return false;
+    }
+
+    /* If STP instance is associated with VLAN remove VLAN from STP before deletion */
+    if(vlan.m_stp_id != -1)
+    {
+        gStpOrch->removeVlanFromStpInstance(vlan.m_alias, 0);
     }
 
     // Fail VLAN removal if there is a vnid associated
